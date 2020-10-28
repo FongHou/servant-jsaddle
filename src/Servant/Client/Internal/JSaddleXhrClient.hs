@@ -280,9 +280,9 @@ toResponse domc xhr = do
   case status of
     0 -> throwError $ ConnectionError $ toException JSaddleConnectionError
     _ -> inDom $ do
-      statusText <- BS.pack <$> JS.getStatusText xhr
+      statusText <- T.encodeUtf8 <$> JS.getStatusText xhr
       headers <- parseHeaders <$> JS.getAllResponseHeaders xhr
-      responseText <- maybe "" (L.fromStrict . BS.pack) <$> JS.getResponseText xhr -- FIXME: Text/Binary? Performance? Test?
+      responseText <- maybe "" (L.fromStrict . T.encodeUtf8) <$> JS.getResponseText xhr
       pure Response
         { responseStatusCode  = mkStatus (fromIntegral status) statusText
         , responseBody        = responseText
